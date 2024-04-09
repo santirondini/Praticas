@@ -27,4 +27,5 @@ esCapicua n = reverse n == n
 potencia :: Integer -> Integer -> Integer
 potencia _ 0 = 1           -- Cualquier número elevado a la potencia 0 es 1
 potencia x n = x * potencia x (n - 1) -- Multiplica x por la potencia de x^(n-1)
---te vacuno el cava
+
+san lorenzo 1 - Independiente del Valle 0
