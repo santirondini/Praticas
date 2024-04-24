@@ -1,5 +1,7 @@
+
 -- Ejercicio: Elenco 
 
+type Valor = Int
 type Pelicula = String
 
 data Persona = UnaPersona {
@@ -50,23 +52,72 @@ listaDeActuacion = [actuacion1, actuacion2, actuacion3, actuacion4]
 peliculasPremiadas :: [Pelicula]
 peliculasPremiadas = ["Titanic", "La La Land", "500 dias con ella ", "El Padrino"]
 
--- 1)
+-- Primer fila:
 
+-- 1)
 tuvoValoracion :: Persona->Bool
 tuvoValoracion actor =  masDeTres (actuaciones actor)
 
-masDeTres :: [Actuacion]->Bool 
+masDeTres :: [Actuacion]->Bool
 masDeTres lista = valoracion (last lista) > 3
 
-peliculaConOscar :: [Pelicula]->Persona->Bool
-pelicula ganadorasDeOscar actor = any (x == primeraPelicula actor)() 
+-- 2)
 
-primerPelicula :: Persona->Pelicula
-primerPelicula actor = head (actuaciones actor)
+sacarPrimero :: Persona->Pelicula
+sacarPrimero actor = pelicula (head (actuaciones actor))
+
+primeraPeliculaConOscar :: Persona->Bool
+primeraPeliculaConOscar actor = sacarPrimero actor `elem` peliculasPremiadas
+
+tieneOscar :: Persona->Bool
+tieneOscar = recibioOscar
+
+recibioOscaroPrimeraPeliConOscar :: Persona->Bool
+recibioOscaroPrimeraPeliConOscar actor = primeraPeliculaConOscar actor || tieneOscar actor
+
+--3)
+
+cantidadDePeliculas :: Persona->Int
+cantidadDePeliculas actor = length (actuaciones actor)
+
+tieneExperiencia :: Persona->Valor->Bool
+tieneExperiencia actor numeroDePeliculas = cantidadDePeliculas actor > numeroDePeliculas
+
+-- 4)
+
+hizoDeclaracionesDesafortunadas :: Persona->Persona
+hizoDeclaracionesDesafortunadas actor = actor {recibioOscar = False}
+
+--5)
+
+ultimaActuacion:: Persona->Actuacion
+ultimaActuacion actor = last (actuaciones actor)
+
+ultimaPeliculaConValoracionMayorATres :: Persona->Bool
+ultimaPeliculaConValoracionMayorATres actor = valoracion (ultimaActuacion actor) > 3
+
+restarDosAValoracionDeActuacion :: Actuacion->Actuacion
+restarDosAValoracionDeActuacion actuacion = actuacion {valoracion = valoracion actuacion - 2}
+
+{-} Preguntar: 
+
+cambiarUltimoDeLista :: [Actuacion]->[Actuacion]
+cambiarUltimoDeLista lista = restarDosAValoracionDeActuacion (last lista) 
+
+exitoEnSuUltimaActuacion :: Persona->Persona
+exitoEnSuUltimaActuacion actor
+                              | ultimaPeliculaConValoracionMayorATres actor = 
+                              | otherwise = actor
+
+-}
+-- 6) 
+
+--Preguntar
+
+buenaValoracionEnTodasYMasDeUnaPelicula :: Persona->Bool
+buenaValoracionEnTodasYMasDeUnaPelicula actor = buenaValoracionEnTodasLasPeliculas (actor) && length (actuaciones actor) > 1
+
+buenaValoracionEnTodasLasPeliculas :: Persona->Bool 
+buenaValoracionEnTodasLasPeliculas actor = all (>3) (valoracion (actuaciones actor))
 
 
-
-oscar :: Persona->Bool
-oscar actor
-            | recibioOscar actor 
-            | 
