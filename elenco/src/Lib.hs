@@ -106,7 +106,7 @@ restarDosAValoracionDeActuacion :: Actuacion->Actuacion
 restarDosAValoracionDeActuacion actuacion = actuacion {valoracion = valoracion actuacion - 2}
 
 cambiarUltimoDeLista :: [Actuacion]->[Actuacion]
-cambiarUltimoDeLista lista = restarDosAValoracionDeActuacion (last lista) 
+cambiarUltimoDeLista lista = init lista ++ [restarDosAValoracionDeActuacion (last lista)]
 
 exitoEnSuUltimaActuacion :: Persona->Persona
 exitoEnSuUltimaActuacion actor
@@ -121,10 +121,19 @@ más en todas las películas en las que actuó, y actuó en más de una películ
 Preguntar:
 
 -}
+
+fueUnCapo actor = (tuvoBuenasValoraciones actor) && (actuoEnMásDeUnaPelícula actor).
+actuoEnMásDeUnaPelícula = ....
+tuvoBuenasValoraciones = (tuvo valoración de 3 estrellas o más) (últimaPelícula actor)
+
 buenaValoracionEnTodasYMasDeUnaPelicula :: Persona->Bool
 buenaValoracionEnTodasYMasDeUnaPelicula actor = buenaValoracionEnTodasLasPeliculas (actor) && length (actuaciones actor) > 1
 
 buenaValoracionEnTodasLasPeliculas :: Persona->Bool 
-buenaValoracionEnTodasLasPeliculas actor = all (>3) (valoracion (actuaciones actor))
+buenaValoracionEnTodasLasPeliculas actor = all (>3) (listaDeValoraciones actor)
+listaDeValoraciones actor = map valoracion (actuaciones actor) 
+
+buenaValoracionEnTodasLasPeliculas' actor = all esBuena (actuaciones actor)
+esBuena actuacion = valoracion actuacion > 3 
 
 
