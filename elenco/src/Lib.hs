@@ -88,7 +88,13 @@ tieneExperiencia actor numeroDePeliculas = cantidadDePeliculas actor > numeroDeP
 hizoDeclaracionesDesafortunadas :: Persona->Persona
 hizoDeclaracionesDesafortunadas actor = actor {recibioOscar = False}
 
---5)
+{-
+
+5) Si un actor/actriz tiene éxito en su última actuación (una valoración mayor a 3 estrellas) 
+lo contratan para la parte 2 de la pelicula, pero recibe una valoración 2 unidades menor.
+
+Preguntar: 
+-}
 
 ultimaActuacion:: Persona->Actuacion
 ultimaActuacion actor = last (actuaciones actor)
@@ -99,21 +105,22 @@ ultimaPeliculaConValoracionMayorATres actor = valoracion (ultimaActuacion actor)
 restarDosAValoracionDeActuacion :: Actuacion->Actuacion
 restarDosAValoracionDeActuacion actuacion = actuacion {valoracion = valoracion actuacion - 2}
 
-{-} Preguntar: 
-
 cambiarUltimoDeLista :: [Actuacion]->[Actuacion]
 cambiarUltimoDeLista lista = restarDosAValoracionDeActuacion (last lista) 
 
 exitoEnSuUltimaActuacion :: Persona->Persona
 exitoEnSuUltimaActuacion actor
-                              | ultimaPeliculaConValoracionMayorATres actor = 
+                              | ultimaPeliculaConValoracionMayorATres actor = cambiarUltimoDeLista (actuaciones actor) 
                               | otherwise = actor
 
+
+{-
+6)  Determinar si el/la actor/actriz siempre tuvo valoración de 3 estrellas o
+más en todas las películas en las que actuó, y actuó en más de una película. 
+ 
+Preguntar:
+
 -}
--- 6) 
-
---Preguntar
-
 buenaValoracionEnTodasYMasDeUnaPelicula :: Persona->Bool
 buenaValoracionEnTodasYMasDeUnaPelicula actor = buenaValoracionEnTodasLasPeliculas (actor) && length (actuaciones actor) > 1
 
