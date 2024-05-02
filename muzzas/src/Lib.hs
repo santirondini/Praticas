@@ -4,8 +4,6 @@ Se quiere saber cuántas pizzas completas de muzzarela hay que pedir, sabiendo l
 de porciones que quiere cada persona (y suponiendo que cada pizza tiene 8 porciones). Lo 
 que pide cada persona está representado por una tupla (sabor,cantidad).
 
-
-
 type Sabor = String
 type Cantidad = Int
 
@@ -30,7 +28,7 @@ cuantasPizzasCompletasAPedir pedidos = foldl (+) 0 (cantidad)
 -- TÉCNICA DE COMBATE
 
 type CantidadDeHorasDeEntrenamiento = Int
-type NombreDeUnObjetivo = String 
+type NombreDeUnObjetivo = String
 type PresionDelGolpe = Int
 type Objetivo = String
 type Poder = Int
@@ -39,7 +37,7 @@ poderDelGolpe :: CantidadDeHorasDeEntrenamiento->Poder
 poderDelGolpe = (*15)
 
 fortalezaDelObjetivo :: NombreDeUnObjetivo->Int
-fortalezaDelObjetivo nombre = 2*length (nombre) 
+fortalezaDelObjetivo nombre = 2*length (nombre)
 
 presion :: NombreDeUnObjetivo->CantidadDeHorasDeEntrenamiento->PresionDelGolpe
 presion nombre horas = div (poderDelGolpe horas) (fortalezaDelObjetivo nombre)
@@ -95,7 +93,7 @@ sumaDeHojasDeLosLibros biblioteca = foldl (+) 0 (listaDePaginas biblioteca)
 cantidadDeLibros :: [Libro]->Int
 cantidadDeLibros lista = length (lista)
 
-promedioDeHojasDeLaBiblioteca :: [Libro]->Int 
+promedioDeHojasDeLaBiblioteca :: [Libro]->Int
 promedioDeHojasDeLaBiblioteca lista = div (sumaDeHojasDeLosLibros lista) (cantidadDeLibros lista)
 
 -- 2) Lectura obligatoria <=> SK, ERAGON o Fundación 
@@ -115,36 +113,36 @@ esFundacion :: Libro->Bool
 esFundacion libro = nombre libro == "Fundación"
 
 lecturaObligatoria :: Lectura->Bool
-lecturaObligatoria lectura = any (\x -> esFundacion x || esDeStephenKing x) lectura
+lecturaObligatoria = any (\x -> esFundacion x || esDeStephenKing x)
 
 -- 3) Biblioteca fantasiosa <=> algun libro de Cp o NG
 
 esDeChristopherPaolini :: Libro->Bool
 esDeChristopherPaolini libro = autor libro == "Christopher Paolini"
 
-esDeNeilGaiman :: Libro->Bool 
+esDeNeilGaiman :: Libro->Bool
 esDeNeilGaiman libro = autor libro == "Neil Gaiman"
 
 esFantasiosa :: Biblioteca->Bool
-esFantasiosa biblio = any(\x -> esDeChristopherPaolini x || esDeNeilGaiman x) biblio
+esFantasiosa = any (\x -> esDeChristopherPaolini x || esDeNeilGaiman x)
 
 -- 4) Nombre de la biblioteca = Nombre de todos sus titulos sin las vocales
 listaDeNombres biblioteca = map nombre biblioteca
 
 esVocal :: Char->Bool
-esVocal caracter = caracter == 'A' || caracter == 'I' || caracter == 'E' || caracter == 'O' || caracter == 'U' || caracter == 'a' || caracter == 'e' || caracter == 'i' || caracter == 'o' || caracter == 'u' 
+esVocal caracter = caracter == 'A' || caracter == 'I' || caracter == 'E' || caracter == 'O' || caracter == 'U' || caracter == 'a' || caracter == 'e' || caracter == 'i' || caracter == 'o' || caracter == 'u'
 
-filtrarVocalesEnUnaPalabra:: String->String 
-filtrarVocalesEnUnaPalabra unNombre = filter(esVocal)unNombre
- 
+filtrarVocalesEnUnaPalabra:: String->String
+filtrarVocalesEnUnaPalabra = filter esVocal
+
 filtrarVocalesEnUnaListaDePalabras:: [String]->[String]
-filtrarVocalesEnUnaListaDePalabras listaDePalabras = map filtrarVocalesEnUnaPalabra listaDePalabras 
+filtrarVocalesEnUnaListaDePalabras = map filtrarVocalesEnUnaPalabra
 
 filtrarVocalesEnNombresDeUnaBiblioteca:: Biblioteca->[String]
 filtrarVocalesEnNombresDeUnaBiblioteca biblio = filtrarVocalesEnUnaListaDePalabras (listaDeNombres biblio)
 
 nombreDeLaBiblioteca:: Biblioteca->String
-nombreDeLaBiblioteca biblio = foldl (++) " " (filtrarVocalesEnNombresDeUnaBiblioteca biblio) 
+nombreDeLaBiblioteca biblio = foldl (++) " " (filtrarVocalesEnNombresDeUnaBiblioteca biblio)
 
 -- 5) Biblioteca ligera <=> Todos sus libros tiene menos de 40 paginas
 
@@ -152,4 +150,7 @@ tieneMenosDeCuarentaPaginas :: Libro->Bool
 tieneMenosDeCuarentaPaginas libro = paginas libro < 40
 
 esLigeraLaBiblioteca :: Biblioteca->Bool
-esLigeraLaBiblioteca biblio = all(tieneMenosDeCuarentaPaginas)biblio
+esLigeraLaBiblioteca = all tieneMenosDeCuarentaPaginas
+
+
+
