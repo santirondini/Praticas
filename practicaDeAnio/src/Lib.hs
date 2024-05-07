@@ -1,4 +1,4 @@
-import GHC.Exts.Heap.Closures (GenClosure(fun))
+
 type Valor = Float
 type Nombre = String
 type Fundacion = Float
@@ -35,59 +35,37 @@ ciudadRara unaciudad = length (nombre unaciudad) < 5
 agregarAtraccion:: Ciudad-> String -> Ciudad
 agregarAtraccion unaciudad nuevaatraccion = unaciudad { atracciones = nuevaatraccion : atracciones unaciudad, costoVida = costoVida unaciudad * 1.2}
 
-crisis:: Ciudad -> Ciudad
+type Evento = Ciudad -> Ciudad
+
+transformacionSucesiva :: Float->Int->Evento
+transformacionSucesiva aumento cantidadLetras unaciudad  = reevaluacion cantidadLetras (crisis (remodelacion aumento unaciudad))
+
+crisis:: Evento
 crisis unaciudad = unaciudad {atracciones = init (atracciones unaciudad), costoVida=costoVida unaciudad*0.9}
 
-remodelacion:: Ciudad->Aumento->Ciudad
-remodelacion unaciudad aumento = unaciudad {nombre = "New " ++ nombre unaciudad, costoVida=costoVida unaciudad * (1 + aumento / 100)}
+remodelacion :: Aumento -> Evento
+remodelacion aumento unaciudad = unaciudad {nombre = "New " ++ nombre unaciudad, costoVida=costoVida unaciudad * (1 + aumento / 100)}
 
-reevaluacion :: Ciudad -> Int -> Ciudad
-reevaluacion unaciudad cantidadLetras
+reevaluacion :: Int -> Evento
+reevaluacion  cantidadLetras unaciudad 
     | ciudadSobria unaciudad cantidadLetras = unaciudad { costoVida = costoVida unaciudad * 1.1 }
     | otherwise = unaciudad { costoVida = costoVida unaciudad - 3 }
 
-
-transformacionSucesiva :: Ciudad->Float->Int->Ciudad
-transformacionSucesiva unaciudad aumento = reevaluacion (crisis (remodelacion unaciudad aumento))
-
 -- ============================================================================= Segunda parte del TP1:
-{- 
-Mi forma: Por santino julian RONINI AKAK EL SANEEEEEEEEEEEEEEE
--}
-
-type FuncionRemodelacion = Ciudad->Aumento->Ciudad 
-type Crisis = (Bool,Ciudad->Ciudad)
-type Remodelacion = (Bool,Ciudad->Aumento->Ciudad,Aumento)
-type Reevaluacion = (Bool,Ciudad->Int->Ciudad,Int)
-
-{-
-boleano = fst
-funcion = snd
--}
-
---Accesos:
-
-booleano = fst
-eventoC = snd
-
-aumenlet (_, _, num) = num
-booleano3 (tf, _, _) = tf
-eventoT (_,ev,_) = ev
-
---aumenlet: aumento/cantidad de letras
---booleano3: es como first para una tupla de 3 elementos
-
---Cambiar el año:
-
-data Anio = UnAnio {
+ 
+data Anio = UnAnio{
     numero :: Int,
-    tieneCrisis :: Crisis,
-    tieneRemodelacion :: Remodelacion,
-    tieneReevaluacion :: Reevaluacion
+    eventos :: [Evento]
 }
 
+anio22 :: Anio
+anio22 = UnAnio 2022 [remodelacion 5, crisis, reevaluacion 10]
 
+anioEnCiudad :: Anio -> Evento
+anioEnCiudad unAnio unaCiudad = foldl (\ciudad evento -> evento ciudad) unaCiudad (eventos unAnio)   
+ 
 
+-- 4.1
 ciudadPrueba :: Ciudad
 ciudadPrueba = UnaCiudad {
     nombre = "Kentucky",
@@ -96,60 +74,32 @@ ciudadPrueba = UnaCiudad {
     costoVida = 24500
 }
 
-anioPrueba :: Anio
-anioPrueba = UnAnio {
-    numero = 2022,
-    tieneCrisis = (True, crisis),
-    tieneRemodelacion = (True, remodelacion, 5.0),
-    tieneReevaluacion = (True, reevaluacion, 7)
-}
+{- 
+4.2 Implementar una función que reciba una ciudad, un criterio de comparación y un evento,
+ de manera que nos diga si la ciudad tras el evento subió respecto a ese criterio. 
+-}
+data Criterio = Nombre | Fundacion | Atracciones | CostoVida deriving Show
 
+--criterio: nombre/fundacion/cantidad de atracciones/costo de vida
 
+algoMejor :: Ciudad -> Evento -> Criterio -> Bool
+--algoMejor ciudad evento criterio =  criterio ciudad > criterio (evento ciudad)
+algoMejor ciudad evento Nombre = length (nombre ciudad) < length (nombre (evento ciudad))
+algoMejor ciudad evento Fundacion = fundacion ciudad < fundacion (evento ciudad)
+algoMejor ciudad evento Atracciones = length (atracciones ciudad) < length (atracciones (evento ciudad))
+algoMejor ciudad evento CostoVida = costoVida ciudad < costoVida (evento ciudad)
 
-hayCrisisEn:: Anio->Bool
-hayCrisisEn = booleano.tieneCrisis
+{- 
+4.3  Para un año, queremos aplicar sobre una ciudad solo los eventos que hagan que el costo de vida
+suba. Debe quedar como resultado la ciudad afectada con dichos eventos.
+-}
 
-hayRemodelacionEn :: Anio->Bool
-hayRemodelacionEn = booleano3.tieneRemodelacion
+{- 
+4.4 Para un año, queremos aplicar solo los eventos que hagan que el costo de vida baje. Debe 
+quedar como resultado la ciudad afectada con dichos eventos.
+-}
 
-hayReevaluacionEn :: Anio->Bool
-hayReevaluacionEn = booleano3.tieneReevaluacion
-
--- Remodelación:
-
-numeroDeAnio :: Anio->Int
-numeroDeAnio  = numero 
-
-aumentoDeAnio :: Anio->Aumento
-aumentoDeAnio anio = aumenlet (tieneRemodelacion anio) 
-
-funcionRemodelacion :: Anio->FuncionRemodelacion
-funcionRemodelacion anio = eventoT (tieneRemodelacion anio)
-
-aplicarRemoelacionDeAnioEnCiudad:: Anio->Ciudad->Ciudad
-aplicarRemoelacionDeAnioEnCiudad anio ciudad =    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{- 
+4.5 Para un año, queremos aplicar solo los eventos que hagan que el valor suba. Debe quedar como 
+resultado la ciudad afectada con dichos eventos.
+-}

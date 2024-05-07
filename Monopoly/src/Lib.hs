@@ -77,7 +77,7 @@ gritar participante = participante {nombreDeParticipante = "AAAH " ++ nombreDePa
 enojarse :: Accion
 enojarse participante = participante {cantidadDeDinero = cantidadDeDinero participante + 50, acciones = gritar : acciones participante}
 
--- Subaste
+-- Subasta:
 
 type Participantes = Participante->Participante
 type ParticipanteGanador = Participante
