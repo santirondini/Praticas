@@ -94,8 +94,8 @@ miguelito valor auto carrera = map (bajarVelocidadSegunValor valor) (autosPorDel
 
 -- Jetpack:
 
-jetpack :: Auto->Tiempo->Auto
-jetpack auto tiempo = auto {distancia = distancia auto + tiempo* (2*velocidad auto) }
+jetpack :: Tiempo->Auto->Auto
+jetpack tiempo auto = auto {distancia = distancia auto + tiempo* (2*velocidad auto) }
 
 -- 4 a) lista de eventos que afectan la carrera. 
 
@@ -135,6 +135,10 @@ correnTodos :: Tiempo->Evento
 correnTodos tiempo = map (`corre` tiempo)
 
 -- 4 c) ¿Como meto el jetpack? Si el jetpack va de auto y tiempo a auto ¿Cómo podria transformarlo en Evento?
+
+-- jetpack :: Tiempo->Auto->Auto
+-- type Evento = Carrera->Carrera
+-- type Carrera = [Auto] 
 
 simulacion :: [Evento]
 simulacion = [correnTodos 30, terremoto blanco, correnTodos 40, miguelito 20 blanco, correnTodos 10]
