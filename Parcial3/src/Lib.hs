@@ -143,7 +143,7 @@ efectividadDelTour turistas tour = sum (listaEspiritual tour (turistasConvencido
 -- 4) Contruir un tour donde se visten playas infinitas 
 
 tourInfinito :: Tour
-tourInfinito = repeat irALaPlaya
+tourInfinito = cycle [irALaPlaya]
 
 
 
