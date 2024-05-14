@@ -1,3 +1,4 @@
+import Data.List (sort)
 -- Mini Golfito:
 
 --Funciones dadas por el parcial:
@@ -61,26 +62,15 @@ hierro n habilidad = tirobase {velocidad = fuerzaJugador habilidad*n, precision 
 palos :: [Palo]
 palos = [patter, madera , hierro 1, hierro 2, hierro 3, hierro 4, hierro 5, hierro 6, hierro 7, hierro 8, hierro 9, hierro 10]
 
-{- 
-2) Definir la función golpe que dados una persona y un palo, obtiene el tiro resultante de usar ese palo con las habilidades de la persona.
-Por ejemplo si Bart usa un putter, se genera un tiro de velocidad = 10, precisión = 120 y altura = 0.
--}
+--2)
 
 type TiroResultante = Tiro
 
 golpe :: Jugador->Palo->TiroResultante
 golpe jugador palo = palo (habilidad jugador)
 
-{-
-3) Lo que nos interesa de los distintos obstáculos es si un tiro puede superarlo, y en el caso de poder superarlo, cómo se ve afectado dicho tiro por el obstáculo. 
-En principio necesitamos representar los siguientes obstáculos:
-          a) Un túnel con rampita sólo es superado si la precisión es mayor a 90 yendo al ras del suelo, independientemente de la velocidad del tiro. 
-          Al salir del túnel la velocidad del tiro se duplica, la precisión pasa a ser 100 y la altura 0.
-          b) Una laguna es superada si la velocidad del tiro es mayor a 80 y tiene una altura de entre 1 y 5 metros.
-           Luego de superar una laguna el tiro llega con la misma velocidad y precisión, pero una altura equivalente a la altura original dividida por el largo de la laguna.
-          c) Un hoyo se supera si la velocidad del tiro está entre 5 y 20 m/s yendo al ras del suelo con una precisión mayor a 95. 
-          Al superar el hoyo, el tiro se detiene, quedando con todos sus componentes en 0.
--}
+-- 3) 
+
 
 type Obstaculo = Tiro->Tiro
 type Condicion = Tiro->Bool
@@ -117,38 +107,33 @@ hoyo tiro
         | condicionParaPasarHoyo tiro = tiroEnCero tiro
         | otherwise = tiroEnCero tiro
 
-{-
-a) Definir palosUtiles que dada una persona y un obstáculo, permita determinar qué palos le sirven para superarlo:
--}
-
---Agarro un tiro y le aplico la función obstuculo; si devolvio el tiro base (0,0,0), significa que no lo supero, entonces que devuelva True y no son iguales, ya que 
--- si no lo son, lo habra superado:
+-- 4) 
 
 elTiroSuperaElObstaculo :: Tiro->Obstaculo->Bool
 elTiroSuperaElObstaculo tiro obstaculo = not (obstaculo tiro == tirobase)
 
--- Yo aca lo que quiero hacer es agarrar un palo de la lista de palos, aplicarle el obstaculo al tiro que devuelven y si lo superan, que los coloque en una lista de "palos
--- utiles"
-
 palosUtiles :: Jugador->Obstaculo->[Palo]
-palosUtiles jugador obstaculo = filter (\unpalo obstaculo -> elTiroSuperaElObstaculo (unpalo (habilidad jugado) obstaculo)) palos
+palosUtiles jugador obstaculo = filter (\p -> elTiroSuperaElObstaculo (p (habilidad jugador)) obstaculo) palos
 
-{-
-b) Saber, a partir de un conjunto de obstáculos y un tiro, cuántos obstáculos consecutivos se pueden superar.
-Por ejemplo, para un tiro de velocidad = 10, precisión = 95 y altura = 0, y una lista con dos túneles con rampita seguidos de un hoyo, 
-el resultado sería 2 ya que la velocidad al salir del segundo túnel es de 40, por ende no supera el hoyo.
-BONUS: resolver este problema sin recursividad, teniendo en cuenta que existe una función takeWhile :: (a -> Bool) -> [a] -> [a] que podría ser de utilidad.
--}
-
-cuantosObstaculosPuedeSuperar :: [Obstaculo]->Tiro->Int
-cuantosObstaculosPuedeSuperar listaDeObstaculos tiro = length (takeWhile (elTiroSuperaElObstaculo tiro) listaDeObstaculos)
+cuantosObstaculosSeguidosPuedeSuperar :: [Obstaculo]->Tiro->Int
+cuantosObstaculosSeguidosPuedeSuperar listaDeObstaculos tiro = length (takeWhile (elTiroSuperaElObstaculo tiro) listaDeObstaculos)
 
 {-
 c) Definir paloMasUtil que recibe una persona y una lista de obstáculos y determina cuál es el palo que le permite 
 superar más obstáculos con un solo tiro.
 -}
 
---paloMasUtil:: Jugador->[Obstaculo]
+cantidadDeObstaculosQueSuperan :: [Obstaculo]->[Tiro]->[Int]
+cantidadDeObstaculosQueSuperan obstaculos tiros = sort (map (\tiro -> cuantosObstaculosSeguidosPuedeSuperar obstaculos tiro) tiros)
+
+quePaloSuperaXcantidadDeObstaculos :: CantidadDeObstaculos->Jugador->[Obstaculo]->Palo
+quePaloSuperaXcantidadDeObstaculos x jugador obstaculos = filter (\palo -> cuantosObstaculosSeguidosPuedeSuperar obstaculos (palo habilidad jugador) == x) palos
+
+type CantidadDeObstaculos = Int
+
+paloMasUtil:: Jugador->[Obstaculo]->Palo
+paloMasUtil jugador obstaculos = filter ()
+
 
 {-
 Dada una lista de tipo [(Jugador, Puntos)] que tiene la información de cuántos puntos ganó cada niño al finalizar el torneo,
@@ -166,13 +151,13 @@ listaDePadres :: [JyP]-> [String]
 listaDePadres lista = map padre (listaDeJugadores lista)
 
 mayorCantidadDePuntos ::[JyP]->Int
-mayorCantidadDePuntos listaDeJyP = maximum (listaDePuntos listaDeJyP) 
+mayorCantidadDePuntos listaDeJyP = maximum (listaDePuntos listaDeJyP)
 
 filtrarPerdedores :: [JyP]->[JyP]
-filtrarPerdedores jyp = filter (\(_,puntos) -> puntos /= mayorCantidadDePuntos jyp) jyp 
+filtrarPerdedores jyp = filter (\(_,puntos) -> puntos /= mayorCantidadDePuntos jyp) jyp
 
 padresDePerdedores :: [JyP]->[String]
-padresDePerdedores lista = listaDePadres (filtrarPerdedores lista) 
+padresDePerdedores lista = listaDePadres (filtrarPerdedores lista)
 
 listaJyP :: [JyP]
 listaJyP = [(bart,150),(todd,100),(rafa,50)]

@@ -7,7 +7,7 @@ data Auto = UnAuto {
 type Carrera = [Auto]
 
 -- 1 a)
-
+ 
 autosDistintos :: Auto->Auto->Bool
 autosDistintos auto1 auto2 = (color auto1 /= color auto2) && (distancia auto1 /= distancia auto2) && (velocidad auto1 /= velocidad auto2)
 
