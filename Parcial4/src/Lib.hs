@@ -96,7 +96,7 @@ listaDePerdidasDeEnergia :: [Gemas]->Personaje->[Int]
 listaDePerdidasDeEnergia gemas victima = map 
 
 gemaMasPoderosa :: Guantelete->Personaje->Gema
-gemaMasPoderosa
+gemaMasPoderosa guantelete personaje = 
 
 
 
