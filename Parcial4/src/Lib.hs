@@ -1,4 +1,5 @@
--- Escuelita de Thanos 
+import Distribution.Parsec.Warning (PWarnType(PWTExperimental))
+--Escuelita de Thanos 
 
 data Personaje = UnPersonaje {
     edad :: Int,
@@ -90,13 +91,18 @@ deGoma = UnGuantelete "goma" [tiempo, alma "usar Mjolnir", loca (alma "programac
 utilizar:: Personaje->[Gema]->Personaje
 utilizar = foldl (\personaje gema -> gema personaje)
 
---Sin recu:
+--  
 
-listaDePerdidasDeEnergia :: [Gemas]->Personaje->[Int]
-listaDePerdidasDeEnergia gemas victima = map 
+perdidaDeEnergia :: Personaje->Gema->Int
+perdidaDeEnergia personaje gema = energia personaje - energia (gema personaje) 
+
+mayorPerdidaDeEnergiaEntreDosGemas :: Personaje->Gema->Gema->Gema
+mayorPerdidaDeEnergiaEntreDosGemas victima gema1 gema2 
+                                        | perdidaDeEnergia (gema1 victima) > perdidaDeEnergia (gema2 victima) = gema1
+                                        | otherwise = gema2 
 
 gemaMasPoderosa :: Guantelete->Personaje->Gema
-gemaMasPoderosa guantelete personaje = 
+gemaMasPoderosa guantelete personaje = foldl (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) personaje (gemas guantelete)  
 
 
 
