@@ -120,19 +120,20 @@ cuantosObstaculosSeguidosPuedeSuperar listaDeObstaculos tiro = length (takeWhile
 
 {-
 c) Definir paloMasUtil que recibe una persona y una lista de obstáculos y determina cuál es el palo que le permite 
-superar más obstáculos con un solo tiro.
+superar más obstáculos con un solo tiro. 
+
+Tanto en este ejercicio como en el de Parcial4, pongo mal la semilla
 -}
 
-cantidadDeObstaculosQueSuperan :: [Obstaculo]->[Tiro]->[Int]
-cantidadDeObstaculosQueSuperan obstaculos tiros = sort (map (\tiro -> cuantosObstaculosSeguidosPuedeSuperar obstaculos tiro) tiros)
-
-quePaloSuperaXcantidadDeObstaculos :: CantidadDeObstaculos->Jugador->[Obstaculo]->Palo
-quePaloSuperaXcantidadDeObstaculos x jugador obstaculos = filter (\palo -> cuantosObstaculosSeguidosPuedeSuperar obstaculos (palo habilidad jugador) == x) palos
+paloMasUtilEntreDos :: Palo->Palo->Jugador->[Obstaculo]->Palo
+paloMasUtilEntreDos palo1 palo2 jugador obstaculos 
+                                          | cuantosObstaculosSeguidosPuedeSuperar obstaculos (palo1 (habilidad jugador)) > cuantosObstaculosSeguidosPuedeSuperar obstaculos (palo2 (habilidad jugador)) = palo1 
+                                          | otherwise = palo2
 
 type CantidadDeObstaculos = Int
 
 paloMasUtil:: Jugador->[Obstaculo]->Palo
-paloMasUtil jugador obstaculos = filter ()
+paloMasUtil jugador obstaculos = foldl (\p1 p2 -> paloMasUtilEntreDos p1 p2 jugador obstaculos) jugador palos   
 
 
 {-
