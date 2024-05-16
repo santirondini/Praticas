@@ -102,7 +102,7 @@ mayorPerdidaDeEnergiaEntreDosGemas victima gema1 gema2
                                         | otherwise = gema2 
 
 gemaMasPoderosa :: Guantelete->Personaje->Gema
-gemaMasPoderosa guantelete personaje = foldl (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) personaje (gemas guantelete)  
+gemaMasPoderosa guantelete personaje = foldl1 (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) (gemas guantelete)  
 
 
 
