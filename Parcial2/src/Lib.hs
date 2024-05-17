@@ -133,7 +133,7 @@ paloMasUtilEntreDos palo1 palo2 jugador obstaculos
 type CantidadDeObstaculos = Int
 
 paloMasUtil:: Jugador->[Obstaculo]->Palo
-paloMasUtil jugador obstaculos = foldl (\p1 p2 -> paloMasUtilEntreDos p1 p2 jugador obstaculos) jugador palos   
+paloMasUtil jugador obstaculos = foldl1 (\p1 p2 -> paloMasUtilEntreDos p1 p2 jugador obstaculos) palos   
 
 
 {-

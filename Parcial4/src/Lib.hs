@@ -1,4 +1,4 @@
-import Distribution.Parsec.Warning (PWarnType(PWTExperimental))
+
 --Escuelita de Thanos 
 
 data Personaje = UnPersonaje {
@@ -91,22 +91,28 @@ deGoma = UnGuantelete "goma" [tiempo, alma "usar Mjolnir", loca (alma "programac
 utilizar:: Personaje->[Gema]->Personaje
 utilizar = foldl (\personaje gema -> gema personaje)
 
---  
+-- 6) 
 
 perdidaDeEnergia :: Personaje->Gema->Int
-perdidaDeEnergia personaje gema = energia personaje - energia (gema personaje) 
+perdidaDeEnergia personaje gema = energia personaje - energia (gema personaje)
 
 mayorPerdidaDeEnergiaEntreDosGemas :: Personaje->Gema->Gema->Gema
-mayorPerdidaDeEnergiaEntreDosGemas victima gema1 gema2 
-                                        | perdidaDeEnergia (gema1 victima) > perdidaDeEnergia (gema2 victima) = gema1
-                                        | otherwise = gema2 
+mayorPerdidaDeEnergiaEntreDosGemas victima gema1 gema2
+                                        | perdidaDeEnergia victima gema1 > perdidaDeEnergia victima gema2 = gema1
+                                        | otherwise = gema2
 
 gemaMasPoderosa :: Guantelete->Personaje->Gema
-gemaMasPoderosa guantelete personaje = foldl (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) personaje (gemas guantelete)  
+gemaMasPoderosa guantelete personaje = foldl1 (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) (gemas guantelete)
 
+-- 7) Dado: 
 
+infinitasGemas :: Gema->[Gema]
+infinitasGemas gema = gema : infinitasGemas gema
 
+guanteleteDeLocos :: Guantelete
+guanteleteDeLocos = UnGuantelete "vesconite" (infinitasGemas tiempo)
 
-
+usoLasTresPrimerasGemas :: Guantelete -> Personaje -> Personaje
+usoLasTresPrimerasGemas guantelete personaje = utilizar personaje (take 3 (gemas guantelete)) 
 
 
