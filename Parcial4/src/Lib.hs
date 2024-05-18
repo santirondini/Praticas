@@ -102,7 +102,6 @@ mayorPerdidaDeEnergiaEntreDosGemas victima gema1 gema2
                                         | otherwise = gema2
 
 gemaMasPoderosa :: Guantelete->Personaje->Gema
-<<<<<<< HEAD
 gemaMasPoderosa guantelete personaje = foldl1 (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) (gemas guantelete)
 
 -- 7) Dado: 
@@ -115,13 +114,11 @@ guanteleteDeLocos = UnGuantelete "vesconite" (infinitasGemas tiempo)
 
 usoLasTresPrimerasGemas :: Guantelete -> Personaje -> Personaje
 usoLasTresPrimerasGemas guantelete personaje = utilizar personaje (take 3 (gemas guantelete)) 
-=======
-gemaMasPoderosa guantelete personaje = foldl1 (\gema1 gema2 -> mayorPerdidaDeEnergiaEntreDosGemas personaje gema1 gema2) (gemas guantelete)  
 
 
 
 
 
->>>>>>> 3282d1fb1d2b58d08cda96cfd6bf870bde916eff
+
 
 
