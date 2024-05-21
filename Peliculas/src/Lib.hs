@@ -64,14 +64,23 @@ primerPalabraEsUnNumero oracion = primeraPalabra oracion `elem` ["1","2","3","4"
 gano :: Pelicula->Premio->Bool
 gano pelicula "Clasico setentista" = estreno pelicula >= 1970 && estreno pelicula <= 1979
 gano pelicula "Plomo" = duracion pelicula > 120
-gano pelicula "Tres son multitud" = length (actores pelicula) == 3
 gano pelicula premio
                     | primerPalabraEsUnNumero premio =  length (actores pelicula) == read (primeraPalabra premio)
 
--- 4)  
+{-
+En el mundo hay festivales de cine que otorgan ciertos premios a las películas. Por ejemplo, Cannes otorga los premios 
+3 son multitud y Clásico setentista. mientras que el festival de Berlín entrega los premios 4 son multitud, plomo y Clasico setentista.
 
+a) Definir la función que permita averiguar cuántos premios de los que otorga un festival puede recibir una película 
+dada y mostrar al menos dos ejemplos de cómo utilizarla para diferentes festivales. 
 
+d) Representar un nuevo festival con al menos dos premios, en el que sea necesario utilizar composición de funciones
 
+-}
+
+cuantosPremiosOtorga :: Premio->Pelicula->[Premio]
+cuantosPremiosOtorga "Cannes" pelicula = filter (gano pelicula) ["3 son multitud","Clasico setentista"]
+cuantosPremiosOtorga "Berlín" pelicula = filter (gano pelicula) ["4 son multitud","Plomo","Clasico setentista"]
 
 
 
