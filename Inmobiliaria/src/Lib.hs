@@ -115,6 +115,16 @@ Definir la función mailsDePersonasInteresadas que a partir de un departamento y
 lista de personas retorne los mails de las personas que tienen alguna búsqueda que se cumpla para el departamento dado.
 -}
 
+cumplenBusqueda :: Persona->Depto->Bool
+cumplenBusqueda persona departamento = all (`cumpleBusqueda` departamento) (busquedas persona)
+
+listaDeMails = map mail
+
+mailsDePersonasInteresadas :: Depto->[Persona]->[Mail]
+mailsDePersonasInteresadas depto personas = listaDeMails (filter (`cumplenBusqueda` depto) personas)
+
+
+
 
 
 
