@@ -1,11 +1,7 @@
 
-type NombreDelMaterial = String
-type Cantidad = Int
 
-data Material = UnMaterial {
-    nombreMaterial :: NombreDelMaterial,
-    cantidad :: Cantidad
-} deriving (Eq,Show)
+type Cantidad = Int
+type Material = String
 
 data Receta = UnaReceta {
     materiales :: [Material],
@@ -18,26 +14,52 @@ data Personaje = UnPersonaje {
     inventario:: [Material]
 } deriving (Eq,Show)
 
+fogata = UnaReceta ["madera","fosforo"] 10
+polloasado= UnaReceta ["pollo","fogata"] 300
+sueter = UnaReceta ["lana","agujas","tintura"] 600
 
--- Materiales :
-madera = UnMaterial "madera" 
-fosforo = UnMaterial "fosforo" 
-pollo = UnMaterial "pollo" 
-sueter = UnMaterial "sueter" 
-lana = UnMaterial "lana" 
-agujas = UnMaterial "agujas" 
-tintura = UnMaterial "tintura" 
-fogata = UnMaterial "fogata" 
+steve = UnPersonaje "Steve" 1500 ["lana","agujas","tintura","madera","fosforo","pollo"]
 
--- Recetas :
-unafogata  = UnaReceta [madera 1, fosforo 1] 10
-unpolloasado = UnaReceta [fogata 1,pollo 1] 300
-unsueter  = UnaReceta [lana 1 ,agujas 1 ,tintura 1] 600
+borrar :: String->[String]->[String]
+borrar  _ [] = []
+borrar aborrar (x:xs)
+                    | x == aborrar = borrar aborrar xs
+                    | otherwise = x : borrar aborrar xs
 
--- Steve : 
-steve = UnPersonaje "Steve" 1500 [madera 3 ,fosforo 10 ,sueter 5]
+tieneLosElementosDeLaReceta :: Personaje->Receta->Bool
+tieneLosElementosDeLaReceta personaje receta = all (\ingrediente -> ingrediente `elem` inventario personaje) (materiales receta)
 
--- Craftear 
--- Tomo como que los unicos elementos crafteables son una fogata, un pollo asado y un sueter:
--- Ver todo otra vez: hacer funciones que resten la cantidad de materiales. Si la cantidad es 1, se saca. Si no, se resta la cantidad: 
+meterFogata :: Personaje->Personaje
+meterFogata personaje = personaje {inventario  = "fogata" : borrar "fosforo" (borrar "madera" (inventario personaje))}
 
+meterSueter :: Personaje->Personaje
+meterSueter personaje = personaje {inventario = "sueter" : borrar "lana" (borrar "agujas" (borrar "tintura" (inventario personaje)))}
+
+meterPolloAsado :: Personaje->Personaje
+meterPolloAsado personaje = personaje {inventario = "pollo asado" : borrar "fogata" (borrar "pollo" (inventario personaje)) }
+
+incrementoPuntos :: Receta->Personaje->Personaje
+incrementoPuntos receta personaje = personaje {puntaje = puntaje personaje + tiempo receta*10}
+
+craftearFogata :: Receta->Personaje->Personaje
+craftearFogata fogata personaje
+                        | tieneLosElementosDeLaReceta personaje fogata =  incrementoPuntos fogata (meterFogata personaje)
+                        | otherwise = personaje
+
+craftearPolloAsado :: Receta->Personaje->Personaje 
+craftearPolloAsado polloasado personaje
+                        | tieneLosElementosDeLaReceta personaje polloasado = incrementoPuntos polloasado (meterPolloAsado personaje)
+                        | otherwise = personaje
+
+craftearSueter :: Receta->Personaje->Personaje
+craftearSueter sueter personaje 
+                        | tieneLosElementosDeLaReceta personaje sueter = incrementoPuntos sueter (meterSueter personaje)
+                        | otherwise = personaje
+
+craftear :: Receta->Personaje->Personaje
+craftear fogata personaje = craftearFogata fogata personaje
+craftear sueter personaje = craftearSueter sueter personaje
+craftear polloasado personaje = craftearPolloAsado polloasado personaje
+
+--hacerPolloAsado :: Personaje->Personaje
+--hacerPolloAsado personaje 
