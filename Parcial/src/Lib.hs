@@ -1,3 +1,5 @@
+
+
 data Auto = UnAuto {
     color :: String,
     velocidad :: Int,
@@ -99,10 +101,10 @@ jetpack tiempo auto = auto {distancia = distancia auto + tiempo* (2*velocidad au
 
 -- 4 a) lista de eventos que afectan la carrera. 
 
-rojo = UnAuto {color = "Rojo", velocidad = 120, distancia=0}
-blanco = UnAuto {color = "Blanco", velocidad = 120, distancia=0}
-azul = UnAuto {color = "Azul", velocidad = 120, distancia=0}
-negro = UnAuto {color = "Negro", velocidad = 120, distancia=0}
+rojo = UnAuto {color = "Rojo", velocidad = 120, distancia = 10}
+blanco = UnAuto {color = "Blanco", velocidad = 120, distancia=20}
+azul = UnAuto {color = "Azul", velocidad = 120, distancia = 5}
+negro = UnAuto {color = "Negro", velocidad = 120, distancia = 15}
 formula1 = [rojo,blanco,azul,negro]
 
 type Color = String
