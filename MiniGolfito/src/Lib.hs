@@ -1,7 +1,5 @@
 
 -- Modelo inicial
-{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
-
 data Jugador = UnJugador {
   nombre :: String,
   padre :: String,
@@ -13,16 +11,18 @@ data Habilidad = Habilidad {
   precisionJugador :: Int
 } deriving (Eq, Show)
 
--- Jugadores de ejemplo
-bart = UnJugador "Bart" "Homero" (Habilidad 25 60)
-todd = UnJugador "Todd" "Ned" (Habilidad 15 80)
-rafa = UnJugador "Rafa" "Gorgory" (Habilidad 10 1)
-
 data Tiro = UnTiro {
   velocidad :: Int,
   precision :: Int,
   altura :: Int
 } deriving (Eq, Show)
+
+palos = [patter,madera] ++ loshierros 10 
+
+-- Jugadores de ejemplo
+bart = UnJugador "Bart" "Homero" (Habilidad 25 60)
+todd = UnJugador "Todd" "Ned" (Habilidad 15 80)
+rafa = UnJugador "Rafa" "Gorgory" (Habilidad 10 1)
 
 type Puntos = Int
 
@@ -33,9 +33,6 @@ maximoSegun f = foldl1 (mayorSegun f)
 mayorSegun f a b
   | f a > f b = a
   | otherwise = b
-
-
-type Palo = Habilidad -> Tiro
 
 constructorDePalos :: Int -> Int -> Int -> Tiro
 constructorDePalos  veloc preci altu = UnTiro {velocidad = veloc, precision = preci, altura = altu}
@@ -57,8 +54,6 @@ loshierros :: Int -> [Palo]
 loshierros 0 = []
 loshierros n = hierros n : loshierros (n-1)
 
-palos = [patter,madera] ++ loshierros 10
-
 --
 
 golpe :: Jugador -> Palo -> Tiro
@@ -66,7 +61,6 @@ golpe jugador palo = palo (habilidad jugador)
 
 -- 
 
-type Obstaculo = Tiro -> Tiro
 type PostObstaculo = Tiro -> Tiro
 
 -- Condiciones:
@@ -92,7 +86,6 @@ condicionesParaTunel = [mayorA precision 90, vaAlras]
 condicionesParaLaguna = [mayorA velocidad 80, entre altura 1 5]
 condicionesParaHoyo = [entre velocidad 5 20, vaAlras, mayorA precision 95]
 
-
 cambiarVelocidad :: Int -> PostObstaculo
 cambiarVelocidad cantidad tiro = tiro {velocidad = cantidad}
 
@@ -103,13 +96,16 @@ cambiarAltura :: Int -> PostObstaculo
 cambiarAltura cantidad tiro = tiro {altura = cantidad}
 
 postTunel :: Tiro -> Tiro
-postTunel tiro = cambiarAltura 0 (cambiarPrecision 100 (cambiarVelocidad (velocidad tiro*2) tiro))   
+postTunel tiro = cambiarAltura 0 (cambiarPrecision 100 (cambiarVelocidad (velocidad tiro*2) tiro))  
 
 postLaguna :: Int -> Tiro -> Tiro
 postLaguna largo tiro = cambiarAltura (div (altura tiro) largo) tiro 
 
 postHoyo :: PostObstaculo
 postHoyo tiro = cambiarVelocidad 0 (cambiarPrecision 0(cambiarAltura 0 tiro))  
+
+postHoyo' :: PostObstaculo
+postHoyo' = cambiarVelocidad 0. cambiarPrecision 0. cambiarAltura 0   
 
 tunel :: Obstaculo
 tunel tiro = siSeCumple condicionesParaTunel tiro postTunel
@@ -120,12 +116,25 @@ laguna largo tiro = siSeCumple condicionesParaLaguna tiro (postLaguna largo)
 hoyo :: Obstaculo
 hoyo tiro = siSeCumple condicionesParaHoyo tiro postHoyo
 
+-- 4) 
 
+pasaElObstaculo :: Jugador -> Obstaculo -> Palo -> Bool
+pasaElObstaculo  jugador obstaculo palo = obstaculo (palo (habilidad jugador)) /= palo (habilidad jugador)     
 
+palosUtiles :: Jugador -> Obstaculo -> [Palo]
+palosUtiles jugador obstaculo = filter (pasaElObstaculo jugador obstaculo) palos
 
+elTiroSuperaElObstaculo ::  Tiro -> Obstaculo -> Bool
+elTiroSuperaElObstaculo tiro obstaculo  = obstaculo tiro /= tiro 
 
+cuantosObstaculosSeguidosPuedeSuperar :: [Obstaculo] -> Tiro -> [Obstaculo] 
+cuantosObstaculosSeguidosPuedeSuperar obstaculos tiro = takeWhile (elTiroSuperaElObstaculo tiro) obstaculos
 
+type Obstaculo = Tiro -> Tiro
+type Palo = Habilidad -> Tiro
 
+paloMasUtil :: Jugador -> [Obstaculo] -> Palo
+paloMasUtil jugador obstaculos = 
 
 
 
