@@ -1,3 +1,5 @@
+import Data.Fixed (Uni)
+import GHC.RTS.Flags (ParFlags(migrate))
 
 --Escuelita de Thanos 
 
@@ -30,11 +32,20 @@ spiderman = UnPersonaje 20 25 ["sentido aracnido", "inteligencia", "tia may"] "p
 
 mcu = [ironman,hulk,spiderman]
 
+mitadDelUniverso :: Universo -> Int
+mitadDelUniverso universo = div (length universo) 2
+
 dividirUniverso :: Universo->Universo
-dividirUniverso universo = drop (div (length universo) 2)  universo
+dividirUniverso universo = drop (mitadDelUniverso universo) universo
+
+cantidadDeGemasIgualA :: Int -> Guantelete -> Bool
+cantidadDeGemasIgualA cantidad guantelete = length (gemas guantelete) == cantidad
+
+hechoDeUru :: Guantelete -> Bool
+hechoDeUru guantelete = material guantelete == "uru"
 
 guanteleteCompleto :: Guantelete->Bool
-guanteleteCompleto guantelete = (length (gemas guantelete) == 6) && (material guantelete == "uru")
+guanteleteCompleto guantelete = cantidadDeGemasIgualA 6 guantelete && hechoDeUru guantelete
 
 chasquido :: Guantelete->Universo->Universo
 chasquido guantelete universo
@@ -43,8 +54,11 @@ chasquido guantelete universo
 
 -- universo apto para pendex, si alguno de los personajes tiene menos 45
 
+esJoven :: Personaje -> Bool
+esJoven personaje = edad personaje < 45
+
 aptoParaPendex :: Universo->Bool
-aptoParaPendex = any (\personaje -> edad personaje < 45)
+aptoParaPendex = any esJoven
 
 -- energia total de un universo = sumatoria de enrgias de los integrantes que tienen mas de una habilidad
 
@@ -56,35 +70,49 @@ listaDePersonajesConMasDeUnaHabilidad = filter tienenMasDeUnaHabilidad
 energiaTotal :: Universo->Int
 energiaTotal universo = sum (map energia (listaDePersonajesConMasDeUnaHabilidad universo))
 
-mente :: Int->Gema
-mente valor personaje = personaje {energia = energia personaje - valor}
+resta :: Int -> Gema
+resta valor personaje = personaje {energia = energia personaje - valor }
 
-restarDiezDeEnergia :: Personaje->Personaje
-restarDiezDeEnergia p = p { energia = energia p - 10}
+tieneXhabilidad :: String -> Personaje -> Bool
+tieneXhabilidad habilidad personaje = habilidad `elem` habilidades personaje  
+  
+sacarHabilidad :: String -> Personaje -> Personaje
+sacarHabilidad habilidad personaje = personaje {habilidades = filter (/= habilidad) (habilidades personaje)}
+
+mente :: Int->Gema
+mente = resta
 
 alma :: String->Gema
-alma habilidad personaje
-                        | habilidad `elem` habilidades personaje = restarDiezDeEnergia (personaje { habilidades = filter (/= habilidad) (habilidades personaje)})
-                        | otherwise = restarDiezDeEnergia personaje
+alma habilidad = resta 10.sacarHabilidad habilidad  
 
 tieneDosHabilidadesOMenos :: Personaje->Bool
 tieneDosHabilidadesOMenos personaje = length (habilidades personaje) <= 2
 
+sacarDosHabilidades :: Gema
+sacarDosHabilidades personaje = personaje {habilidades = drop 2 (habilidades personaje)}
+
 poder :: Gema
-poder personaje
-               | tieneDosHabilidadesOMenos personaje = personaje {habilidades = drop 2 (habilidades personaje), energia = 0}
-               | otherwise = personaje {energia = 0}
+poder personaje = resta (energia personaje) (sacarDosHabilidades personaje)
+
+conMitadDeSuEdad :: Gema
+conMitadDeSuEdad p = p {edad = div (edad p) 2}
+
+edadAlaMitad :: Gema
+edadAlaMitad p  
+                | div (edad p) 2 < 18 = p
+                | otherwise = conMitadDeSuEdad p
 
 tiempo :: Gema
-tiempo personaje
-                | div (edad personaje) 2 <= 18 = personaje
-                | otherwise = personaje { edad = div (edad personaje) 2}
+tiempo = edadAlaMitad 
 
-espacio :: String->Gema
-espacio nuevoplaneta personaje = personaje { energia = energia personaje - 20, planeta = nuevoplaneta}
+transportarA :: String -> Gema
+transportarA nuevo p = p {planeta = nuevo}
+
+espacio :: String -> Gema
+espacio nuevo = resta 20 . transportarA nuevo 
 
 loca :: Gema->Personaje->Personaje
-loca gema personaje = gema (gema personaje)
+loca gema = gema.gema 
 
 deGoma = UnGuantelete "goma" [tiempo, alma "usar Mjolnir", loca (alma "programacion en Haskell")]
 
@@ -113,7 +141,7 @@ guanteleteDeLocos :: Guantelete
 guanteleteDeLocos = UnGuantelete "vesconite" (infinitasGemas tiempo)
 
 usoLasTresPrimerasGemas :: Guantelete -> Personaje -> Personaje
-usoLasTresPrimerasGemas guantelete personaje = utilizar personaje (take 3 (gemas guantelete)) 
+usoLasTresPrimerasGemas guantelete personaje = utilizar personaje (take 3 (gemas guantelete))
 
 
 
